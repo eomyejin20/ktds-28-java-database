@@ -233,11 +233,93 @@ SELECT EMPLOYEE_ID
  WHERE COMMISSION_PCT IS NOT NULL
 ;
 -- 22. 이름의 첫 글자가 'D' 인 사원들의 모든 정보를 조회한다.
+SELECT EMPLOYEE_ID 
+	 , FIRST_NAME 
+	 , LAST_NAME 
+	 , EMAIL 
+	 , PHONE_NUMBER 
+	 , HIRE_DATE 
+	 , JOB_ID 
+	 , SALARY 
+	 , COMMISSION_PCT 
+	 , MANAGER_ID 
+	 , DEPARTMENT_ID 
+  FROM EMPLOYEES
+ WHERE FIRST_NAME LIKE 'D%'
+;
 -- 23. 성의 마지막 글자가 'a' 인 사원들의 모든 정보를 조회한다.
+SELECT EMPLOYEE_ID 
+	 , FIRST_NAME 
+	 , LAST_NAME 
+	 , EMAIL 
+	 , PHONE_NUMBER 
+	 , HIRE_DATE 
+	 , JOB_ID 
+	 , SALARY 
+	 , COMMISSION_PCT 
+	 , MANAGER_ID 
+	 , DEPARTMENT_ID 
+  FROM EMPLOYEES
+ WHERE LAST_NAME LIKE '%a'
+;
 -- 24. 전화번호에 '.124.'이 포함된 사원들의 모든 정보를 조회한다.
+SELECT EMPLOYEE_ID 
+	 , FIRST_NAME 
+	 , LAST_NAME 
+	 , EMAIL 
+	 , PHONE_NUMBER 
+	 , HIRE_DATE 
+	 , JOB_ID 
+	 , SALARY 
+	 , COMMISSION_PCT 
+	 , MANAGER_ID 
+	 , DEPARTMENT_ID 
+  FROM EMPLOYEES
+ WHERE PHONE_NUMBER LIKE '%.124.%'
+;
 -- 25. 이름이 4글자인 사원의 모든 정보를 조회한다.
+SELECT EMPLOYEE_ID 
+	 , FIRST_NAME 
+	 , LAST_NAME 
+	 , EMAIL 
+	 , PHONE_NUMBER 
+	 , HIRE_DATE 
+	 , JOB_ID 
+	 , SALARY 
+	 , COMMISSION_PCT 
+	 , MANAGER_ID 
+	 , DEPARTMENT_ID 
+  FROM EMPLOYEES
+ WHERE FIRST_NAME LIKE '____'
+;
 -- 26. 이름이나 성에 'A' 혹은 'a' 가 포함된 사원의 모든 정보를 조회한다.
+--INLINE VIEW로 풀이 가능
+SELECT EMPLOYEE_ID 
+	 , FIRST_NAME 
+	 , LAST_NAME 
+	 , EMAIL 
+	 , PHONE_NUMBER 
+	 , HIRE_DATE 
+	 , JOB_ID 
+	 , SALARY 
+	 , COMMISSION_PCT 
+	 , MANAGER_ID 
+	 , DEPARTMENT_ID 
+  FROM EMPLOYEES
+ WHERE FIRST_NAME LIKE '%A%'
+    OR FIRST_NAME LIKE '%a%'
+    OR LAST_NAME LIKE '%A%'
+    OR LAST_NAME LIKE '%a%'
+;
+
+
 -- 27. 국가명이 6자리인 국가의 모든 정보를 조회한다.
+SELECT COUNTRY_ID 
+	 , COUNTRY_NAME 
+	 , REGION_ID 
+  FROM COUNTRIES
+ WHERE COUNTRY_NAME LIKE '______'
+;
 -- 28. '20230222' 문자 데이터를 날짜로 변환해 조회한다.(DUAL)
 SELECT '20230222'
 	 , TO_DATE('20230222', 'YYYY-MM-DD')
@@ -375,31 +457,208 @@ SELECT EMPLOYEE_ID
 -- 50. 가장 늦게 입사한 사원의 모든 정보를 조회한다.
 -- 51. 가장 일찍 입사한 사원의 모든 정보를 조회한다.
 -- 52. 사내의 최고급여과 최저급여의 차이를 조회한다.
+SELECT MAX(SALARY) - MIN(SALARY) -- 21,900
+  FROM EMPLOYEES
+;
 -- 53. 102번 직원의 직속 부하직원의 수를 조회한다.
+SELECT COUNT(EMPLOYEE_ID) -- 1
+  FROM EMPLOYEES
+ WHERE MANAGER_ID = 102
+;
 -- 54. 113번 직원의 직속 부하직원의 수를 조회한다.
+SELECT COUNT(EMPLOYEE_ID) -- 0
+  FROM EMPLOYEES
+ WHERE MANAGER_ID = 113
+;
+
 -- 55. 'SA_REP' 직무인 직원 중 가장 높은 급여과 가장 낮은 급여를 조회한다.
+SELECT MAX(SALARY) -- 11,500
+	 , MIN(SALARY) -- 6,100
+  FROM EMPLOYEES
+ WHERE JOB_ID = 'SA_REP'
+;
 -- 56. 부서아이디별 평균 급여를 조회한다.
+SELECT DEPARTMENT_ID 
+	 , AVG(SALARY)
+  FROM EMPLOYEES
+ GROUP BY DEPARTMENT_ID 
+;
 -- 57. 직무아이디별 평균 급여, 최고급여, 최저급여를 조회한다.
+SELECT JOB_ID 
+	 , AVG(SALARY)
+	 , MAX(SALARY)
+	 , MIN(SALARY)
+  FROM EMPLOYEES
+ GROUP BY JOB_ID 
+;
 -- 58. 직무아이디별 사원의 수를 조회한다.
--- 59. 상사아이디별 부하직원의 수를 조회한다. 단, 부하직원이 2명 이하인 경우는 제외한다.
+SELECT JOB_ID 
+	 , COUNT(EMPLOYEE_ID )
+  FROM EMPLOYEES
+ GROUP BY JOB_ID 
+;
+--59. 상사아이디별 부하직원의 수를 조회한다. 단, 부하직원이 2명 이하인 경우는 제외한다.
+SELECT MANAGER_ID 
+	 , COUNT(EMPLOYEE_ID)
+  FROM EMPLOYEES
+ GROUP BY MANAGER_ID 
+HAVING COUNT(EMPLOYEE_ID) > 2
+;
 -- 60. 부서번호별 현재 시간으로부터 15년 전 보다 일찍 입사한 사원의 수를 조회한다.
+SELECT DEPARTMENT_ID 
+	 , COUNT(EMPLOYEE_ID)
+  FROM EMPLOYEES
+ WHERE HIRE_DATE < ADD_MONTHS(SYSDATE, 12 * -15)
+ GROUP BY DEPARTMENT_ID 
+;
 -- 61. 커미션을 안받는 사원이 근무하는 도시를 조회한다.
 -- 62. 회사 전체의 평균 급여보다 많이 받는 사원들 중 
 --     이름에 'u' 가 포함된 사원과 동일한 부서에서 근무중인 사원들의 모든 정보를 조회한다.
+SELECT EMPLOYEE_ID
+	 , FIRST_NAME 
+	 , LAST_NAME 
+	 , EMAIL 
+	 , PHONE_NUMBER 
+	 , HIRE_DATE
+	 , JOB_ID
+	 , SALARY 
+	 , COMMISSION_PCT 
+	 , MANAGER_ID 
+	 , DEPARTMENT_ID 
+  FROM EMPLOYEES 
+ WHERE SALARY > (SELECT AVG(SALARY)
+ 				   FROM EMPLOYEES)
+   AND DEPARTMENT_ID IN (SELECT DISTINCT DEPARTMENT_ID -- 중복번호가 있음
+ 						   FROM EMPLOYEES 
+ 						  WHERE FIRST_NAME LIKE '%u%')
+ ;
 -- 63. 이름이 'Renske' 인 사원의 급여과 같은 급여를 받는 사원의 모든 정보를 조회한다. 
 --     단, 'Renske' 사원은 조회에서 제외한다.
+SELECT EMPLOYEE_ID
+	 , FIRST_NAME 
+	 , LAST_NAME 
+	 , EMAIL 
+	 , PHONE_NUMBER 
+	 , HIRE_DATE
+	 , JOB_ID
+	 , SALARY 
+	 , COMMISSION_PCT 
+	 , MANAGER_ID 
+	 , DEPARTMENT_ID 
+  FROM EMPLOYEES 
+ WHERE SALARY = (SELECT SALARY 
+ 				   FROM EMPLOYEES
+ 				  WHERE FIRST_NAME = 'Renske')
+   AND FIRST_NAME != 'Renske'
+;
 -- 64. 평균 급여보다 많이 받는 사원들의 사원번호, 이름, 성, 급여를 조회한다.
+SELECT EMPLOYEE_ID 
+	 , FIRST_NAME 
+	 , LAST_NAME 
+	 , SALARY 
+  FROM EMPLOYEES
+ WHERE SALARY > (SELECT AVG(SALARY)
+ 				   FROM EMPLOYEES)
+;
+  
 -- 65. 평균 급여보다 적게 받는 사원들의 사원번호, 급여, 부서번호를 조회한다.
+SELECT EMPLOYEE_ID 
+	 , SALARY 
+	 ,DEPARTMENT_ID 
+  FROM EMPLOYEES
+ WHERE SALARY < (SELECT AVG(SALARY)
+ 				   FROM EMPLOYEES)
+;
 -- 66. 가장 많은 급여를 받는 사원의 사원번호, 이름, 급여를 조회한다.
+SELECT EMPLOYEE_ID 
+	 , FIRST_NAME 
+	 , SALARY 
+  FROM EMPLOYEES
+ WHERE SALARY = (SELECT MAX(SALARY)
+ 				   FROM EMPLOYEES)
+;
 -- 67. 자신의 상사보다 더 많은 급여를 받는 사원의 모든 정보를 조회한다.
 -- 68. 자신의 상사보다 더 일찍 입사한 사원의 모든 정보를 조회한다.
 -- 69. 가장 많은 커미션을 받는 사원의 모든 정보를 조회한다.
+SELECT EMPLOYEE_ID
+	 , FIRST_NAME 
+	 , LAST_NAME 
+	 , EMAIL 
+	 , PHONE_NUMBER 
+	 , HIRE_DATE
+	 , JOB_ID
+	 , SALARY 
+	 , COMMISSION_PCT 
+	 , MANAGER_ID 
+	 , DEPARTMENT_ID
+  FROM EMPLOYEES
+ WHERE COMMISSION_PCT = (SELECT MAX(COMMISSION_PCT )
+ 				   		   FROM EMPLOYEES)
+;
 -- 70. 가장 적은 커미션을 받는 사원의 급여과 커미션을 조회한다.
+SELECT SALARY 
+	 , COMMISSION_PCT 
+  FROM EMPLOYEES
+ WHERE COMMISSION_PCT = (SELECT MIN(COMMISSION_PCT )
+ 				   		   FROM EMPLOYEES)
+;
 -- 71. 사원이 속한 부서의 평균급여보다 적게 받는 사원의 모든 정보를 조회한다.
 -- 72. 50번 부서의 부서장의 이름, 성, 급여를 조회한다.
+SELECT FIRST_NAME
+	 , LAST_NAME 
+	 , SALARY 
+  FROM EMPLOYEES
+ WHERE EMPLOYEE_ID = (SELECT MANAGER_ID 
+ 					    FROM DEPARTMENTS
+ 					   WHERE DEPARTMENT_ID = 50)
+;
 -- 73. 사원이 없는 부서명을 조회한다.
+
+--사원이 근무하는 부서의 번호
+SELECT DISTINCT DEPARTMENT_ID --중복제거
+  FROM EMPLOYEES
+;
+
+SELECT DEPARTMENT_NAME 
+  FROM DEPARTMENTS
+ WHERE DEPARTMENT_ID NOT IN (SELECT DISTINCT DEPARTMENT_ID 
+ 						       FROM EMPLOYEES
+ 						       WHERE DEPARTMENT_ID IS NOT NULL) --NULL은 NOT IN으로 비교할수없음(!=연산불가)
+;
 -- 74. 직무가 변경된 사원의 모든 정보를 조회한다.
+--사원번호가 JOBHISTORY에 존재
+SELECT EMPLOYEE_ID
+	 , FIRST_NAME 
+	 , LAST_NAME 
+	 , EMAIL 
+	 , PHONE_NUMBER 
+	 , HIRE_DATE
+	 , JOB_ID
+	 , SALARY 
+	 , COMMISSION_PCT 
+	 , MANAGER_ID 
+	 , DEPARTMENT_ID
+  FROM EMPLOYEES
+ WHERE EMPLOYEE_ID IN (SELECT DISTINCT EMPLOYEE_ID 
+ 				         FROM JOB_HISTORY)
+;
 -- 75. 직무가 변경된적 없는 사원의 모든 정보를 조회한다.
+-- 사원번호가
+SELECT EMPLOYEE_ID
+	 , FIRST_NAME 
+	 , LAST_NAME 
+	 , EMAIL 
+	 , PHONE_NUMBER 
+	 , HIRE_DATE
+	 , JOB_ID
+	 , SALARY 
+	 , COMMISSION_PCT 
+	 , MANAGER_ID 
+	 , DEPARTMENT_ID
+  FROM EMPLOYEES
+ WHERE EMPLOYEE_ID NOT IN (SELECT DISTINCT EMPLOYEE_ID 
+ 				             FROM JOB_HISTORY)
+;
 -- 76. 직무가 가장 많이 변경된 부서의 이름을 조회한다.
 -- 77. 근무중인 사원이 없는 도시를 조회한다.
 -- 78. 급여가 7000 에서 12000 사이인 사원이 근무중인 도시를 조회한다.
@@ -411,11 +670,89 @@ SELECT EMPLOYEE_ID
 -- 84. 모든 사원들의 이름, 성, 급여, 부서명을 부서번호로 내림차순 정렬하여 조회한다.
 -- 85. 2007년에 직무가 변경된 사원들의 현재 직무명, 부서명, 사원번호, 이름, 성을 조회한다.
 -- 86. 부서장이 없는 부서명 중 첫 글자가 'C' 로 시작하는 부서명을 조회한다.
+SELECT DEPARTMENT_NAME 
+  FROM DEPARTMENTS
+ WHERE DEPARTMENT_ID IN (SELECT DISTINCT DEPARTMENT_ID 
+ 						   FROM DEPARTMENTS
+ 						  WHERE MANAGER_ID IS NULL)
+   AND DEPARTMENT_NAME LIKE ('C%') 
+;
 -- 87. 지역변호가 1000 ~ 1999 사이인 지역내 부서의 모든 정보를 조회한다.
+SELECT DEPARTMENT_ID 
+	 , DEPARTMENT_NAME
+	 , MANAGER_ID 
+	 , LOCATION_ID 
+  FROM DEPARTMENTS
+  WHERE LOCATION_ID IN (SELECT DISTINCT LOCATION_ID 
+  						  FROM LOCATIONS 
+  						 WHERE LOCATION_ID > 1000
+  						   AND LOCATION_ID < 1999)
+  
+;
 -- 88. 국가 아이디가 'C'로 시작하는 국가의 지역을 모두 조회한다.
+SELECT LOCATION_ID 
+	 , STREET_ADDRESS 
+	 , POSTAL_CODE 
+	 , CITY 
+	 , STATE_PROVINCE 
+	 , COUNTRY_ID 
+  FROM LOCATIONS 
+ WHERE COUNTRY_ID IN (SELECT DISTINCT COUNTRY_ID 
+ 						FROM COUNTRIES
+ 					   WHERE COUNTRY_ID LIKE 'C%')
+;
 -- 89. 109번 사원의 입사일 부터 1년 동안 입사한 사원의 모든 정보를 조회한다.
+--2002-08-16
+
+SELECT  EMPLOYEE_ID
+	 , FIRST_NAME 
+	 , LAST_NAME 
+	 , EMAIL 
+	 , PHONE_NUMBER 
+	 , HIRE_DATE
+	 , JOB_ID
+	 , SALARY 
+	 , COMMISSION_PCT 
+	 , MANAGER_ID 
+	 , DEPARTMENT_ID
+  FROM EMPLOYEES
+ WHERE HIRE_DATE >= (SELECT HIRE_DATE 
+ 					   FROM EMPLOYEES
+ 					  WHERE EMPLOYEE_ID = 109)	
+   AND HIRE_DATE <= (SELECT ADD_MONTHS(HIRE_DATE, 12) 
+ 					  FROM EMPLOYEES
+					 WHERE EMPLOYEE_ID = 109)		
+;
 -- 90. 가장 먼저 입사한 사원의 입사일로부터 2년 동안 입사한사원의 모든 정보를 조회한다.
--- 91. 가장 늦게 입사한 사원의 입사일 보다 1년 앞서 입사한 사원의 모든 정보를 조회한다.
+-- 가장 먼저 입사한 사원의 입사일
+SELECT MIN(HIRE_DATE) --2001.01.13
+  FROM EMPLOYEES
+;
+-- 2001.01.13부터 2년
+SELECT ADD_MONTHS(MIN(HIRE_DATE), 24)
+  FROM EMPLOYEES
+;
+
+SELECT  EMPLOYEE_ID
+	 , FIRST_NAME 
+	 , LAST_NAME 
+	 , EMAIL 
+	 , PHONE_NUMBER 
+	 , HIRE_DATE
+	 , JOB_ID
+	 , SALARY 
+	 , COMMISSION_PCT 
+	 , MANAGER_ID 
+	 , DEPARTMENT_ID
+  FROM EMPLOYEES
+ WHERE HIRE_DATE >= (SELECT MIN(HIRE_DATE)
+ 					   FROM EMPLOYEES)
+   AND HIRE_DATE <= (SELECT ADD_MONTHS(MIN(HIRE_DATE), 24)
+   					   FROM EMPLOYEES)
+;
+-- 91. 가장 늦게 입사한 사원의 입사일의 1년 전보다 일찍 입사한 사원의 모든 정보를 조회한다.
+
+
 -- 92. 사원들이 근무하는 부서명, 이름, 성을 조회한다.
 -- 93. 우편번호가 5자리인 도시에서 근무하는 사원명, 부서명, 도시명, 우편번호를 조회한다.
 -- 94. 부서장이 있는 부서명 중 첫 글자가 'S' 로 시작하는 부서에서 근무중인 사원의 
