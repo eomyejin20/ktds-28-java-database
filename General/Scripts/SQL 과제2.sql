@@ -1,0 +1,218 @@
+/*문제별 결과 건수와 결과를 캡처와 함께 댓글로 등록하세요.
+
+예> 1번: n건
+    결과: 캡처 사진
+ 
+    2번: n건
+    결과: 캡처 사진*/
+
+  
+
+-- 1. 이름이 'S'로 시작하는 사원을 조회하시오.
+SELECT EMPLOYEE_ID 
+	 , FIRST_NAME 
+	 , LAST_NAME 
+	 , EMAIL 
+	 , PHONE_NUMBER 
+	 , HIRE_DATE 
+	 , JOB_ID 
+	 , SALARY 
+	 , COMMISSION_PCT 
+	 , MANAGER_ID 
+	 , DEPARTMENT_ID 
+  FROM EMPLOYEES
+ WHERE FIRST_NAME LIKE 'S%'
+;
+
+-- 2. 이름에 'an'이 포함된 사원을조회하시오.
+SELECT EMPLOYEE_ID 
+	 , FIRST_NAME 
+	 , LAST_NAME 
+	 , EMAIL 
+	 , PHONE_NUMBER 
+	 , HIRE_DATE 
+	 , JOB_ID 
+	 , SALARY 
+	 , COMMISSION_PCT 
+	 , MANAGER_ID 
+	 , DEPARTMENT_ID 
+  FROM EMPLOYEES
+ WHERE FIRST_NAME LIKE '%an%'
+;
+-- 3. EMAIL이 'A'로 끝나는 사원을 조회하시오.
+SELECT EMPLOYEE_ID 
+	 , FIRST_NAME 
+	 , LAST_NAME 
+	 , EMAIL 
+	 , PHONE_NUMBER 
+	 , HIRE_DATE 
+	 , JOB_ID 
+	 , SALARY 
+	 , COMMISSION_PCT 
+	 , MANAGER_ID 
+	 , DEPARTMENT_ID 
+  FROM EMPLOYEES
+ WHERE EMAIL LIKE '%A'
+;
+-- 4. 이름을 모두 대문자로 변환해 조회하시오.
+SELECT UPPER(FIRST_NAME)
+  FROM EMPLOYEES
+;
+-- 5. 성을 모두 소문자로 변환해 조회하시오.
+SELECT LOWER(FIRST_NAME)
+  FROM EMPLOYEES
+;
+-- 6. 전체 사원 수를 조회하시오.
+SELECT COUNT(EMPLOYEE_ID)
+  FROM EMPLOYEES
+;
+-- 7. 전체 사원의 급여 합계를 조회하시오.
+SELECT SUM(SALARY)
+  FROM EMPLOYEES
+;
+-- 8. 전체 사원의 평균 급여를 조회하시오.
+SELECT AVG(SALARY)
+  FROM EMPLOYEES
+;
+-- 9. 가장 높은 급여와 가장 낮은 급여를 함께 조회하시오.
+SELECT MAX(SALARY)
+	 , MIN(SALARY)
+  FROM EMPLOYEES
+;
+-- 10. 부서별 사원 수를 조회하시오.
+SELECT DEPARTMENT_ID 
+	 , COUNT(EMPLOYEE_ID)
+  FROM EMPLOYEES
+ GROUP BY DEPARTMENT_ID 
+;
+-- 11. 부서별 평균 급여를 조회하시오.
+SELECT DEPARTMENT_ID 
+	 , AVG(SALARY)
+  FROM EMPLOYEES
+ GROUP BY DEPARTMENT_ID 
+;
+-- 12. 직무아이디별 최고 급여와 평균 급여를 조회하시오.
+SELECT JOB_ID 
+	 , MAX(SALARY)
+	 , AVG(SALARY)
+  FROM EMPLOYEES
+ GROUP BY JOB_ID 
+;
+-- 13. 부서아이디별, 직무아이디별 사원 수를 함께 조회하시오.
+SELECT DEPARTMENT_ID 
+	 , JOB_ID 
+	 , COUNT(EMPLOYEE_ID)
+  FROM EMPLOYEES
+ GROUP BY DEPARTMENT_ID 
+ 	 , JOB_ID 
+;
+-- 14. 상사번호별로 관리하는 사원 수를 조회하시오.
+SELECT MANAGER_ID 
+	 , COUNT(EMPLOYEE_ID)
+  FROM EMPLOYEES
+ GROUP BY MANAGER_ID 
+;
+--15. 사원 수가 5명 이상인 부서번호만 조회하시오.
+SELECT DEPARTMENT_ID
+	 , COUNT(EMPLOYEE_ID)
+  FROM EMPLOYEES
+ GROUP BY DEPARTMENT_ID 
+HAVING COUNT(EMPLOYEE_ID) >= 5 
+;
+-- 16. 평균 급여가 8000 이상인 부서아이디만 조회하시오.
+SELECT DEPARTMENT_ID
+  FROM EMPLOYEES
+ GROUP BY DEPARTMENT_ID 
+HAVING AVG(SALARY) >= 8000 
+;
+-- 17. 최고 급여가 15000을 초과하는 직무아이디만 조회하시오.
+SELECT JOB_ID
+	 , MAX(SALARY)
+  FROM EMPLOYEES
+ GROUP BY JOB_ID  
+HAVING MAX(SALARY) > 15000
+;
+-- 18. 부서별 급여 합계가 30000을 초과하는 부서아이디만 조회하시오.
+SELECT DEPARTMENT_ID 
+	 , SUM(SALARY)
+  FROM EMPLOYEES
+ GROUP BY DEPARTMENT_ID 
+HAVING SUM(SALARY) > 30000
+;
+-- 19. 관리하는 사원이 2명 이상인 매니저만 조회하시오.
+SELECT MANAGER_ID 
+	 , COUNT(EMPLOYEE_ID)
+  FROM EMPLOYEES
+ GROUP BY MANAGER_ID 
+HAVING COUNT(EMPLOYEE_ID) >= 2
+;
+-- 20. 부서별 급여 합계가 30000을 초과하는 부서아이디만 조회하시오.
+SELECT DEPARTMENT_ID 
+	 , SUM(SALARY)
+  FROM EMPLOYEES
+ GROUP BY DEPARTMENT_ID 
+HAVING SUM(SALARY) > 30000
+;
+-- 21. 관리하는 사원이 2명 이상인 매니저만 조회하시오.
+SELECT MANAGER_ID 
+	 , COUNT(EMPLOYEE_ID)
+  FROM EMPLOYEES
+ GROUP BY MANAGER_ID 
+HAVING COUNT(EMPLOYEE_ID) >= 2
+;
+-- 22. 전체 평균 급여보다 높은 급여를 받는 사원을 조회하시오.
+SELECT EMPLOYEE_ID 
+	 , SALARY
+  FROM EMPLOYEES
+ WHERE SALARY > (SELECT AVG(SALARY)
+ 				   FROM EMPLOYEES)
+;
+-- 23. 'IT' 부서에서 근무하는 사원을 조회하시오.
+SELECT EMPLOYEE_ID 
+  FROM EMPLOYEES
+ WHERE DEPARTMENT_ID = (SELECT DEPARTMENT_ID 
+ 						  FROM DEPARTMENTS
+ 						 WHERE DEPARTMENT_NAME = 'IT')
+;
+-- 24. 가장 급여가 높은 사원을 조회하시오.
+SELECT EMPLOYEE_ID 
+	 , SALARY 
+  FROM EMPLOYEES
+ WHERE SALARY = (SELECT MAX(SALARY)
+ 				   FROM EMPLOYEES)
+;
+-- 25. 'King'이라는 성을 가진 사원과 같은 부서에서 근무하는 사원을 조회하시오. (본인 제외)
+SELECT EMPLOYEE_ID 
+	 , LAST_NAME 
+	 , FIRST_NAME 
+  FROM EMPLOYEES
+ WHERE DEPARTMENT_ID IN (SELECT DEPARTMENT_ID 
+ 						   FROM EMPLOYEES
+ 						  WHERE LAST_NAME = 'King')
+   AND LAST_NAME != 'King'
+;
+-- 26. 사원이 한 명도 없는 부서번호와 부서명을 조회하시오.
+--사원의 모든 부서
+--부서 - 사원의 모든 부서번호
+SELECT DEPARTMENT_ID 
+	 , DEPARTMENT_NAME 
+  FROM DEPARTMENTS
+ WHERE DEPARTMENT_ID NOT IN (SELECT DISTINCT DEPARTMENT_ID 
+ 							   FROM EMPLOYEES
+ 							   WHERE DEPARTMENT_ID IS NOT NULL)
+;
+-- 28. 직무변경 이력이 있는 사원의 이름과 성을 조회하시오.
+-- JOB_HISTORY 의 사원 아이디가 존재
+SELECT FIRST_NAME 
+	 , LAST_NAME 
+  FROM EMPLOYEES
+ WHERE EMPLOYEE_ID IN (SELECT DISTINCT EMPLOYEE_ID 
+ 						 FROM JOB_HISTORY)
+;
+-- 29. 직무변경 이력이 없는 사원의 이름과 성을 조회하시오.
+SELECT FIRST_NAME 
+	 , LAST_NAME 
+  FROM EMPLOYEES
+ WHERE EMPLOYEE_ID NOT IN (SELECT DISTINCT EMPLOYEE_ID 
+ 							 FROM JOB_HISTORY)
+;
