@@ -1,3 +1,602 @@
+--	MENU 임시테이블 만들기
+WITH MENU AS (
+	SELECT '1000' AS MENU_ID
+		 , '브랜드패션' AS MENU_NAME
+		 , NULL AS TOP_MENU_ID
+      FROM DUAL
+     UNION 
+    SELECT '2000' AS MENU_ID
+		 , '패션의류/잡화/뷰티' AS MENU_NAME
+		 , NULL AS TOP_MENU_ID
+      FROM DUAL
+     UNION 
+    SELECT '1100' AS MENU_ID
+		 , '브랜드의류' AS MENU_NAME
+		 , '1000' AS TOP_MENU_ID
+      FROM DUAL
+     UNION 
+    SELECT '1200' AS MENU_ID
+		 , '브랜드잡화' AS MENU_NAME
+		 , '1000' AS TOP_MENU_ID
+      FROM DUAL
+     UNION 
+    SELECT '1300' AS MENU_ID
+		 , '스포츠브랜드' AS MENU_NAME
+		 , '1000' AS TOP_MENU_ID
+      FROM DUAL
+     UNION 
+    SELECT '2100' AS MENU_ID
+		 , '패션의류' AS MENU_NAME
+		 , '2000' AS TOP_MENU_ID
+      FROM DUAL
+     UNION 
+    SELECT '2200' AS MENU_ID
+		 , '잡화' AS MENU_NAME
+		 , '2000' AS TOP_MENU_ID
+      FROM DUAL
+     UNION 
+    SELECT '2300' AS MENU_ID
+		 , '뷰티' AS MENU_NAME
+		 , '2000' AS TOP_MENU_ID
+      FROM DUAL
+     UNION 
+    SELECT '1101' AS MENU_ID
+		 , '브랜드 여성의류' AS MENU_NAME
+		 , '1100' AS TOP_MENU_ID
+      FROM DUAL
+     UNION 
+    SELECT '1102' AS MENU_ID
+		 , '브랜드 남성의류' AS MENU_NAME
+		 , '1100' AS TOP_MENU_ID
+      FROM DUAL
+     UNION 
+    SELECT '1103' AS MENU_ID
+		 , '브랜드 캐쥬얼의류' AS MENU_NAME
+		 , '1100' AS TOP_MENU_ID
+      FROM DUAL
+     UNION 
+    SELECT '1201' AS MENU_ID
+		 , '브랜드 잡화' AS MENU_NAME
+		 , '1200' AS TOP_MENU_ID
+      FROM DUAL
+     UNION 
+    SELECT '1202' AS MENU_ID
+		 , '브랜드 쥬얼리/시계' AS MENU_NAME
+		 , '1200' AS TOP_MENU_ID
+      FROM DUAL
+     UNION 
+    SELECT '1203' AS MENU_ID
+		 , '수입명품' AS MENU_NAME
+		 , '1200' AS TOP_MENU_ID
+      FROM DUAL
+     UNION 
+    SELECT '1301' AS MENU_ID
+		 , '브랜드 아웃도어' AS MENU_NAME
+		 , '1300' AS TOP_MENU_ID
+      FROM DUAL
+     UNION 
+    SELECT '1302' AS MENU_ID
+		 , '브랜드 스포츠패션' AS MENU_NAME
+		 , '1300' AS TOP_MENU_ID
+      FROM DUAL
+     UNION 
+    SELECT '2101' AS MENU_ID
+		 , '여성의류' AS MENU_NAME
+		 , '2100' AS TOP_MENU_ID
+      FROM DUAL
+     UNION 
+    SELECT '2102' AS MENU_ID
+		 , '남성의류' AS MENU_NAME
+		 , '2100' AS TOP_MENU_ID
+      FROM DUAL
+     UNION 
+    SELECT '2103' AS MENU_ID
+		 , '언더웨어' AS MENU_NAME
+		 , '2100' AS TOP_MENU_ID
+      FROM DUAL
+     UNION 
+    SELECT '2104' AS MENU_ID
+		 , '유아동의류' AS MENU_NAME
+		 , '2100' AS TOP_MENU_ID
+      FROM DUAL
+     UNION 
+    SELECT '2201' AS MENU_ID
+		 , '신발' AS MENU_NAME
+		 , '2200' AS TOP_MENU_ID
+      FROM DUAL
+     UNION 
+    SELECT '2202' AS MENU_ID
+		 , '가방/잡화' AS MENU_NAME
+		 , '2200' AS TOP_MENU_ID
+      FROM DUAL
+     UNION 
+    SELECT '2203' AS MENU_ID
+		 , '유아동 신발/잡화' AS MENU_NAME
+		 , '2200' AS TOP_MENU_ID
+      FROM DUAL
+     UNION 
+    SELECT '2203' AS MENU_ID
+		 , '쥬얼리/시계' AS MENU_NAME
+		 , '2200' AS TOP_MENU_ID
+      FROM DUAL
+     UNION 
+    SELECT '2204' AS MENU_ID
+		 , '수입명품' AS MENU_NAME
+		 , '2200' AS TOP_MENU_ID
+      FROM DUAL
+     UNION 
+    SELECT '2301' AS MENU_ID
+		 , '화장품/향수' AS MENU_NAME
+		 , '2300' AS TOP_MENU_ID
+      FROM DUAL
+     UNION 
+    SELECT '2302' AS MENU_ID
+		 , '바디/헤어' AS MENU_NAME
+		 , '2300' AS TOP_MENU_ID
+      FROM DUAL
+)
+-- 재귀 조인을 이용한 계층데이터 조회
+-- 모든 상위 하위 메뉴가 조회
+--후위탐색
+ SELECT MENU_ID
+	  , MENU_NAME
+	  , TOP_MENU_ID
+	  , LEVEL --degree
+   FROM MENU
+  START WITH MENU_ID = 1203
+CONNECT BY PRIOR TOP_MENU_ID = MENU_ID
+;
+
+-- 전위탐색
+-- 브랜드 패션(1000) 메뉴의 모든 하위 메뉴를 조회한다.
+-- SELECT MENU_ID
+--	  , MENU_NAME
+--	  , TOP_MENU_ID
+--	  , LEVEL --degree
+--   FROM MENU
+--  START WITH MENU_ID = 1000
+--CONNECT BY PRIOR MENU_ID = TOP_MENU_ID
+--;
+
+
+
+--재귀 참조를 이용한 조인
+--해당 메뉴의 하위나 상위 하나만 조회
+--SELECT M_TOP.MENU_ID
+--	 , M_TOP.MENU_NAME
+--	 , M_TOP.TOP_MENU_ID
+--	 , M_SUB.MENU_ID
+--	 , M_SUB.MENU_NAME
+--	 , M_SUB.TOP_MENU_ID
+--  FROM MENU M_TOP
+-- INNER JOIN MENU M_SUB
+--    ON M_TOP.MENU_ID = M_SUB.TOP_MENU_ID 
+-- 브랜드패션(1000) 메뉴의 하위 메뉴를 조회한다. (1100, 1200, 1300)
+ -- WHERE M_TOP.MENU_ID = 1000
+ -- 패션의류/잡화/뷰티(2000) 메뉴의 하위 메뉴를 조회한다. (2100, 2200, 2300)
+ -- WHERE M_TOP.MENU_ID = 2000
+ -- 브랜드잡화(1200) 메뉴의 하위 메뉴를 조회한다. (1201, 1202, 1203)
+ -- WHERE M_TOP.MENU_ID = 1200
+ -- 유아동 신발/잡화(2203) 메뉴의 하위 메뉴를 조회한다.
+ --  WHERE M_TOP.MENU_ID = 2203
+ -- 브랜드 캐쥬얼의류(1103) 메뉴의 부모 메뉴의 이름을 조회한다. (브랜드의류(1100))
+ --  WHERE M_SUB.MENU_ID = 1103
+ -- 브랜드의류(1100) 메뉴의 부모 메뉴의 이름을 조회한다. (브랜드패션(1000))
+ -- WHERE M_SUB.MENU_ID = 1100
+ -- 브랜드패션(1000) 메뉴의 부모 메뉴의 이름을 조회한다.
+ -- WHERE M_SUB.MENU_ID = 1000
+
+
+
+-- ERD
+-- 테이블 조인+그룹핑
+--직무명 별 수행중인 사원의 수를 조회한다.
+SELECT J.JOB_TITLE 
+	 , COUNT(E.EMPLOYEE_ID )
+  FROM EMPLOYEES E
+ INNER JOIN JOBS J
+    ON E.JOB_ID = J.JOB_ID 
+ GROUP BY J.JOB_TITLE 
+;
+--직무명 별 수행중인 사원의 수를 조회한다. 직무명으로 오름차순 정렬
+SELECT J.JOB_TITLE 
+	 , COUNT(E.EMPLOYEE_ID )
+  FROM EMPLOYEES E
+ INNER JOIN JOBS J
+    ON E.JOB_ID = J.JOB_ID 
+ GROUP BY J.JOB_TITLE 
+ ORDER BY J.JOB_TITLE ASC
+;
+-- 직무명 별 수행중인 사원의 수를 조회한다. 사원의수로 내림차순 정렬
+SELECT J.JOB_TITLE 
+	 , COUNT(E.EMPLOYEE_ID ) AS EMP_CNT
+  FROM EMPLOYEES E
+ INNER JOIN JOBS J
+    ON E.JOB_ID = J.JOB_ID 
+ GROUP BY J.JOB_TITLE 
+ ORDER BY EMP_CNT DESC
+;
+
+-- 테이블 조인+ 조건
+-- 108번 사원의 이름과 부서명을 조회한다.
+SELECT E.FIRST_NAME 
+	 , D.DEPARTMENT_NAME 
+  FROM EMPLOYEES E
+ INNER JOIN DEPARTMENTS D
+ 	ON E.DEPARTMENT_ID  = D.DEPARTMENT_ID 
+ WHERE E.EMPLOYEE_ID = 108 
+;
+ -- 108번 사원의 이름과 부서명을 조회한다.최적화
+ SELECT E.FIRST_NAME 
+ 	  , D.DEPARTMENT_NAME 
+   FROM EMPLOYEES E
+  INNER JOIN DEPARTMENTS D
+     ON E.DEPARTMENT_ID = D.DEPARTMENT_ID 
+    AND E.EMPLOYEE_ID = 108
+;  
+
+-- 위 코드 최적화
+ SELECT E.FIRST_NAME 
+ 	  , D.DEPARTMENT_NAME 
+   FROM EMPLOYEES E
+  INNER JOIN DEPARTMENTS D
+     ON E.EMPLOYEE_ID = 108
+    AND E.DEPARTMENT_ID = D.DEPARTMENT_ID 
+;
+
+-- 직무 아이디가 AD_VP이거나 부서의 번호가 70번인 사원의 이름, 직무명, 부서명을 조회한다.
+SELECT E.FIRST_NAME 
+	 , J.JOB_TITLE 
+	  , E.DEPARTMENT_ID 
+  FROM EMPLOYEES E
+ INNER JOIN DEPARTMENTS D
+    ON E.DEPARTMENT_ID  = D.DEPARTMENT_ID 
+ INNER JOIN JOBS j 
+    ON E.JOB_ID = J.JOB_ID
+ WHERE J.JOB_ID = 'AD_VP'
+    OR E.DEPARTMENT_ID = 70
+;
+ 
+-- 직무명이 'Administration Vice President'이거나 부서의 번호가 70번인 사원의 이름, 직무명, 부서명을 조회한다.
+-- 추출할 테이블이 아닐경우 JOIN x -> WHERE에서 
+SELECT E.FIRST_NAME 
+	 , D.DEPARTMENT_NAME 
+  FROM EMPLOYEES E
+ INNER JOIN DEPARTMENTS D
+    ON E.DEPARTMENT_ID  = D.DEPARTMENT_ID 
+ WHERE D.DEPARTMENT_ID  = 70
+ 	OR E.JOB_ID = (SELECT JOB_ID
+ 					 FROM JOBS
+ 					WHERE JOB_TITLE = 'Administration Vice President')
+;
+
+-- Europe에 근무중인(서브쿼리로 ) 모든사원의 이름과 근무중인 도시를 조회한다.
+SELECT E.FIRST_NAME 
+	 , L.CITY 
+  FROM EMPLOYEES E
+ INNER JOIN DEPARTMENTS D
+    ON E.DEPARTMENT_ID = E.DEPARTMENT_ID 
+ INNER JOIN LOCATIONS L
+    ON D.LOCATION_ID = L.LOCATION_ID 
+ WHERE L.COUNTRY_ID IN (SELECT COUNTRY_ID 
+  						  FROM COUNTRIES
+						 WHERE REGION_ID = (SELECT REGION_ID 
+ 											  FROM REGIONS
+ 											 WHERE REGION_NAME = 'Europe' ))
+;
+
+
+--Europe에 존재하는 국가의 아이디들
+SELECT COUNTRY_ID 
+  FROM COUNTRIES
+ WHERE REGION_ID = Europe의 REGION_ID 
+
+ -- Europe의 REGION_ID 
+SELECT REGION_ID 
+  FROM REGIONS
+ WHERE REGION_NAME = 'Erope'
+
+
+
+
+
+------------------------------------------------------------
+ -- 테이블 조인(여러 테이블을 관계를 이용해 하나의 테이블로 만드는 과정) 연습
+-- 직무가 변경된 사원들의 사원번호, 이름, 급여, 현재 수행중인 직무의 이름, 
+--      과거에 근무했던 부서의 이름, 현재 근무중인 부서의 이름을 조회한다.
+SELECT E.EMPLOYEE_ID
+	 , E.FIRST_NAME
+	 , E.SALARY
+	 , J.JOB_TITLE
+	 , D_PAST.DEPARTMENT_NAME AS PAST_DEPT_NAME
+	 , D_PRESENT.DEPARTMENT_NAME AS PRESENT_DEPT_NAME
+  FROM EMPLOYEES E
+ INNER JOIN JOB_HISTORY JH
+    ON E.EMPLOYEE_ID = JH.EMPLOYEE_ID
+ INNER JOIN JOBS J
+ 	ON J.JOB_ID = E.JOB_ID
+ INNER JOIN DEPARTMENTS D_PRESENT
+    ON D_PRESENT.DEPARTMENT_ID = E.DEPARTMENT_ID
+ INNER JOIN DEPARTMENTS D_PAST
+    ON D_PAST.DEPARTMENT_ID = JH.DEPARTMENT_ID
+;
+
+
+
+-- 3개 이상의 테이블 조인 방법
+-- 사원 + 부서 + 직무
+SELECT *
+  FROM EMPLOYEES E
+ INNER JOIN DEPARTMENTS D -- 사원 + 부서
+    ON E.DEPARTMENT_ID = D.DEPARTMENT_ID
+ INNER JOIN JOBS J -- 사원 + 직무
+    ON E.JOB_ID = J.JOB_ID
+;
+-- 사원 + 부서 + 직무 + 지역
+SELECT *
+  FROM EMPLOYEES E
+ INNER JOIN DEPARTMENTS D -- 사원 + 부서
+    ON E.DEPARTMENT_ID = D.DEPARTMENT_ID
+ INNER JOIN JOBS J -- 사원 + 직무
+    ON J.JOB_ID = E.JOB_ID
+ INNER JOIN LOCATIONS L -- 부서 + 지역
+    ON L.LOCATION_ID = D.LOCATION_ID
+;
+-- 사원 + 부서 + 지역 + 국가 + 대륙
+SELECT *
+  FROM EMPLOYEES E
+ INNER JOIN DEPARTMENTS D -- 사원 + 부서
+    ON E.DEPARTMENT_ID = D.DEPARTMENT_ID
+ INNER JOIN LOCATIONS L -- 부서 + 지역
+    ON L.LOCATION_ID = D.LOCATION_ID
+ INNER JOIN COUNTRIES C -- 지역 + 국가
+    ON C.COUNTRY_ID = L.COUNTRY_ID
+ INNER JOIN REGIONS R -- 국가 + 대륙
+    ON R.REGION_ID = C.REGION_ID
+;
+-- 사원 테이블 + 부서 테이블 ==> 사원_부서
+-- 사원의 이름, 사원의 성, 급여, 부서장의 사원번호, 부서명
+SELECT E.FIRST_NAME
+	 , E.LAST_NAME
+	 , E.SALARY
+	 , D.MANAGER_ID
+	 , D.DEPARTMENT_NAME
+  FROM EMPLOYEES E
+ INNER JOIN DEPARTMENTS D
+    ON D.DEPARTMENT_ID = E.DEPARTMENT_ID
+;
+
+-- 사원의 이름과 성, 직무아이디, 직무의 이름, 급여, 최대 급여, 최소 급여를 조회한다.
+SELECT E.FIRST_NAME
+	 , E.LAST_NAME
+	 , J.JOB_ID
+	 , J.JOB_TITLE
+	 , E.SALARY
+	 , J.MAX_SALARY
+	 , J.MIN_SALARY
+  FROM EMPLOYEES E
+ INNER JOIN JOBS J
+    ON E.JOB_ID = J.JOB_ID
+;
+
+
+-- 80번 부서의 부서장으로 근무하는 사원의 직무명을 조회한다.
+-- 1. 80번 부서의 부서장의 직무아이디를 조회한다.
+SELECT JOB_ID
+  FROM EMPLOYEES
+ WHERE EMPLOYEE_ID = 80번 부서의 부서장 사원번호
+;
+SELECT MANAGER_ID -- 145
+  FROM DEPARTMENTS
+ WHERE DEPARTMENT_ID = 80
+;
+SELECT JOB_ID -- SA_MAN
+  FROM EMPLOYEES
+ WHERE EMPLOYEE_ID = (SELECT MANAGER_ID -- 145
+					    FROM DEPARTMENTS
+					   WHERE DEPARTMENT_ID = 80)
+;
+-- 2. 80번 부서의 부서장 사원의 직무 명을 조회한다.
+SELECT JOB_TITLE
+  FROM JOBS
+ WHERE JOB_ID = 80번 부서 부서장의 직무 아이디
+;
+SELECT JOB_TITLE -- Sales Manager
+  FROM JOBS
+ WHERE JOB_ID = (SELECT JOB_ID -- SA_MAN
+				   FROM EMPLOYEES
+				  WHERE EMPLOYEE_ID = (SELECT MANAGER_ID -- 145
+									     FROM DEPARTMENTS
+									    WHERE DEPARTMENT_ID = 80))
+;
+-- 103번 사원이 근무중인 부서의 이름을 조회한다.
+SELECT DEPARTMENT_NAME
+  FROM DEPARTMENTS
+ WHERE DEPARTMENT_ID = (SELECT DEPARTMENT_ID
+						  FROM EMPLOYEES
+						 WHERE EMPLOYEE_ID = 103)
+;
+
+SELECT DEPARTMENT_ID
+  FROM EMPLOYEES
+ WHERE EMPLOYEE_ID = 103
+;
+-- 118번 사원이 근무중인 부서의 도시명을 조회한다.
+-- 1. 118번 사원이 근무중인 부서의 지역 번호를 조회한다.
+SELECT LOCATION_ID -- 1700
+  FROM DEPARTMENTS
+ WHERE DEPARTMENT_ID = (SELECT DEPARTMENT_ID
+						  FROM EMPLOYEES
+						 WHERE EMPLOYEE_ID = 118)
+;
+SELECT DEPARTMENT_ID
+  FROM EMPLOYEES
+ WHERE EMPLOYEE_ID = 118
+; 
+-- 2. 118번 사원이 근무중인 지역 번호로 도시명을 조회한다.
+SELECT CITY
+  FROM LOCATIONS
+ WHERE LOCATION_ID = (SELECT LOCATION_ID -- 1700
+						FROM DEPARTMENTS
+					   WHERE DEPARTMENT_ID = (SELECT DEPARTMENT_ID
+												FROM EMPLOYEES
+											   WHERE EMPLOYEE_ID = 118))
+;
+-- 'Seattle' 에서 근무중인 사원들의 직무 명을 중복없이 조회한다.
+-- 1. 'Seattle' 에 존재하는 부서의 번호
+SELECT DEPARTMENT_ID
+  FROM DEPARTMENTS
+ WHERE LOCATION_ID = 'Seattle'의 지역 번호
+;
+SELECT LOCATION_ID
+  FROM LOCATIONS
+ WHERE CITY = 'Seattle'
+;
+
+SELECT DEPARTMENT_ID -- 10, 30, 90, 100, 110, ...
+  FROM DEPARTMENTS
+ WHERE LOCATION_ID = (SELECT LOCATION_ID
+					    FROM LOCATIONS
+					   WHERE CITY = 'Seattle')
+;
+
+-- 2. 'Seattle'에 존재하는 부서에서 근무하는 사원들의 JOB_ID
+SELECT JOB_ID
+  FROM EMPLOYEES
+ WHERE DEPARTMENT_ID IN ('Seattle' 에 존재하는 부서의 번호)
+;
+SELECT DISTINCT JOB_ID -- AD_ASST, PU_MAN, PU_CLERK, ...
+  FROM EMPLOYEES
+ WHERE DEPARTMENT_ID IN (SELECT DEPARTMENT_ID -- 10, 30, 90, 100, 110, ...
+						   FROM DEPARTMENTS
+						  WHERE LOCATION_ID = (SELECT LOCATION_ID -- 10, 30, 90, 100, 110, ...
+											     FROM LOCATIONS
+											    WHERE CITY = 'Seattle'))
+;
+-- 3. 'Seattle'에 존재하는 부서에서 근무하는 사원들의 직무명
+SELECT JOB_TITLE
+  FROM JOBS
+ WHERE JOB_ID IN ('Seattle'에 존재하는 부서에서 근무하는 사원들의 JOB_ID)
+;
+SELECT JOB_TITLE
+  FROM JOBS
+ WHERE JOB_ID IN (SELECT DISTINCT JOB_ID -- AD_ASST, PU_MAN, PU_CLERK, ...
+				    FROM EMPLOYEES
+				   WHERE DEPARTMENT_ID IN (SELECT DEPARTMENT_ID -- 10, 30, 90, 100, 110, ...
+										     FROM DEPARTMENTS
+										    WHERE LOCATION_ID = (SELECT LOCATION_ID -- 10, 30, 90, 100, 110, ...
+															       FROM LOCATIONS
+															      WHERE CITY = 'Seattle')))
+;
+-- 102번 사원이 수행중인 직무의 이름과 최대 급여, 최소 급여를 조회한다.
+SELECT JOB_TITLE
+	 , MAX_SALARY
+	 , MIN_SALARY
+  FROM JOBS
+ WHERE JOB_ID = (SELECT JOB_ID
+				   FROM EMPLOYEES
+				  WHERE EMPLOYEE_ID = 102)
+;
+SELECT JOB_ID
+  FROM EMPLOYEES
+ WHERE EMPLOYEE_ID = 102
+;
+-- Seattle에 있는 부서의 이름과 부서장의 사원 번호를 조회한다.
+SELECT DEPARTMENT_NAME
+	 , MANAGER_ID
+  FROM DEPARTMENTS
+ WHERE LOCATION_ID = (SELECT LOCATION_ID
+					    FROM LOCATIONS
+					   WHERE CITY = 'Seattle')
+;
+SELECT LOCATION_ID
+  FROM LOCATIONS
+ WHERE CITY = 'Seattle'
+;
+-- Asia에서 근무중인 사원들의 이름과 성, 부서 번호를 조회한다.
+-- 1. 'Asia'에 존재하는 국가 아이디를 조회한다.
+SELECT COUNTRY_ID
+  FROM COUNTRIES
+ WHERE REGION_ID = 'Asia'의 대륙 아이디
+;
+SELECT REGION_ID -- 3
+  FROM REGIONS
+ WHERE REGION_NAME = 'Asia'
+;
+SELECT COUNTRY_ID -- AU, CN, IN, JP, ML, SG
+  FROM COUNTRIES
+ WHERE REGION_ID = (SELECT REGION_ID -- 3
+					  FROM REGIONS
+					 WHERE REGION_NAME = 'Asia')
+;
+-- 2. 'Asia'에 존재하는 국가의 지역번호를 조회한다.
+SELECT LOCATION_ID
+  FROM LOCATIONS
+ WHERE COUNTRY_ID IN ('Asia'에 존재하는 국가 아이디)
+;
+SELECT LOCATION_ID -- 1200, 1300, 2000, 2100, 2200, 2300
+  FROM LOCATIONS
+ WHERE COUNTRY_ID IN (SELECT COUNTRY_ID -- AU, CN, IN, JP, ML, SG
+					    FROM COUNTRIES
+					   WHERE REGION_ID = (SELECT REGION_ID -- 3
+										    FROM REGIONS
+										   WHERE REGION_NAME = 'Asia'))
+;
+-- 3. 'Asia'에 존재하는 지역의 부서번호를 조회한다.
+SELECT DEPARTMENT_ID
+  FROM DEPARTMENTS
+ WHERE LOCATION_ID IN ('Asia'에 존재하는 국가의 지역번호)
+;
+
+SELECT DEPARTMENT_ID -- NULL
+  FROM DEPARTMENTS
+ WHERE LOCATION_ID IN (SELECT LOCATION_ID -- 1200, 1300, 2000, 2100, 2200, 2300
+						 FROM LOCATIONS
+						WHERE COUNTRY_ID IN (SELECT COUNTRY_ID -- AU, CN, IN, JP, ML, SG
+											   FROM COUNTRIES
+											  WHERE REGION_ID = (SELECT REGION_ID -- 3
+																   FROM REGIONS
+																  WHERE REGION_NAME = 'Asia')))
+;
+-- 4. 'Asia'에 존재하는 부서에서 근무하는 사원의 정보를 조회한다.
+SELECT FIRST_NAME
+	 , LAST_NAME
+	 , DEPARTMENT_ID
+  FROM EMPLOYEES
+ WHERE DEPARTMENT_ID IN ('Asia'에 존재하는 지역의 부서번호)
+;
+SELECT FIRST_NAME
+	 , LAST_NAME
+	 , DEPARTMENT_ID
+  FROM EMPLOYEES
+ WHERE DEPARTMENT_ID IN (SELECT DEPARTMENT_ID -- NULL
+						   FROM DEPARTMENTS
+						  WHERE LOCATION_ID IN (SELECT LOCATION_ID -- 1200, 1300, 2000, 2100, 2200, 2300
+												  FROM LOCATIONS
+												 WHERE COUNTRY_ID IN (SELECT COUNTRY_ID -- AU, CN, IN, JP, ML, SG
+																	    FROM COUNTRIES
+																	   WHERE REGION_ID = (SELECT REGION_ID -- 3
+																						    FROM REGIONS
+																						   WHERE REGION_NAME = 'Asia'))))
+;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+------------------------------------------------------------
+
 -- 평균 급여보다 많은 급여를 받는 사원의 이름, 성, 급여를 조회한다.
 -- 1. 특정할 수 없는 데이터는 무엇인가? 평균 급여
 SELECT AVG(SALARY)
